@@ -1,5 +1,5 @@
 FROM node:alpine
 COPY . /app
 WORKDIR /app
-RUN yarn install
+RUN npm install
 CMD node index.js
