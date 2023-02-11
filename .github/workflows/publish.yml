@@ -1,0 +1,17 @@
+name: publish
+run-name: Test build and push image to container repository
+on: [push]
+jobs:
+  publish-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker build . --tag ghcr.io/mac503/container-test:latest
+      - run: docker run ghcr.io/mac503/container-test:latest
+      - run: docker push ghcr.io/mac503/container-test:latest
