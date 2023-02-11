@@ -12,5 +12,5 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker build . --tag ghcr.io/mac503/container-test:latest
-      - run: docker push ghcr.io/mac503/container-test:latest
+      - run: docker build . --tag ghcr.io/mikecarter-dev/container-test:latest
+      - run: docker push ghcr.io/mikecarter-dev/container-test:latest
