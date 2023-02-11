@@ -13,5 +13,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: docker build . --tag ghcr.io/mac503/container-test:latest
-      - run: docker run ghcr.io/mac503/container-test:latest
       - run: docker push ghcr.io/mac503/container-test:latest
