@@ -12,5 +12,36 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker build . --tag ghcr.io/mikecarter-dev/container-test2:latest
-      - run: docker push ghcr.io/mikecarter-dev/container-test2:latest
+
+      - name: Build and push to ghcr
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: |
+            ghcr.io/mikecarter-dev/container-test:latest
+            ghcr.io/mikecarter-dev/container-test:${{ github.sha }}
+
+  deploy:
+    name: Deploy
+    if: github.ref == 'refs/heads/master'
+    needs: [publish-image]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://mikecarter.dev:16443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to k8s
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: default
+          manifests: |
+            kubernetes/deployment.yaml
+          images: |
+            ghcr.io/mikecarter-dev/container-test:${{ github.sha }}
